@@ -1,0 +1,9 @@
+Harry Potter and the Philosopher's Stone
+J.K. Rowling
+0747532699|4640799
+Harry Potter|1|45175
+.
+true
+true
+false
+https://d.gr-assets.com/books/1374678708m/848654.jpg
