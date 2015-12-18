@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.HashMap;
 
 public class Library {
@@ -15,7 +16,7 @@ public class Library {
 		if(DEBUG) for(Book book : library) System.out.println(book);
 	}
 
-	public void addBook(Book newBook) { library.add(newBook); }
+	public void addBook(Book newBook) { if(!containsBook(newBook)) library.add(newBook); }
 
 	public ArrayList<Book> getLibrary() { return library; }
 
@@ -34,5 +35,14 @@ public class Library {
 	public HashMap<String, ArrayList<Book>> getSeries(){
 		// Returns the books in their sets of series.
 		return null;
+	}
+
+	public boolean containsBook(Book book){
+		String isbn = book.getISBN();
+		Iterator<Book> it = library.iterator();
+		while(it.hasNext()){
+			if(it.next().getISBN().equals(isbn)) return true;
+		}
+		return false;
 	}
 }

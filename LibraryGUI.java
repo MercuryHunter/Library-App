@@ -17,8 +17,9 @@ public class LibraryGUI extends JFrame implements ActionListener {
 
 		// Panel for the buttons at top Series, Author, Name, Search Box
 		JPanel pnlButtons = new JPanel();
-		pnlButtons.setLayout(new GridLayout(1, 4)); //RxC
+		pnlButtons.setLayout(new GridLayout(1, 5)); //RxC
 		// TODO: Make custom button with different look? Allow for up/down sorting?
+		JButton btnAdd = new JButton("Add");
 		JButton btnSeries = new JButton("Series");
 		JButton btnAuthor = new JButton("Author");
 		JButton btnName = new JButton("Name");
@@ -27,12 +28,14 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		txtSearch.setActionCommand("Search");
 
 		// Add to Panel
+		pnlButtons.add(btnAdd);
 		pnlButtons.add(btnSeries);
 		pnlButtons.add(btnAuthor);
 		pnlButtons.add(btnName);
 		pnlButtons.add(txtSearch);
 
 		// Add ActionListener to the buttons and search field.
+		btnAdd.addActionListener(this);
 		btnSeries.addActionListener(this);
 		btnAuthor.addActionListener(this);
 		btnName.addActionListener(this);
@@ -46,7 +49,13 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	// ActionListener method, use the class to handle action events, instead
 	public void actionPerformed(ActionEvent e){
 		String command = e.getActionCommand();
-		if (command.equals("Series")){
+		if (command.equals("Add")){
+			String isbn = JOptionPane.showInputDialog(null, "Enter the ISBN here:");
+			isbn = isbn.replaceAll("[^0-9]", "");
+			Book temporary = new Book(isbn);
+			library.addBook(temporary);
+		}
+		else if (command.equals("Series")){
 
 		}
 		else if (command.equals("Author")){

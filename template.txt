@@ -1,0 +1,13 @@
+Book Name
+Author
+ISBN|GoodreadsWorkID
+Series|Position|GoodreadsSeriesID
+Description (. if empty)
+Owned (bool)
+Read (bool)
+WantToRead (bool)
+imageurl (. if empty)
+
+// FILE SAVED AS ISBN.txt
+key: bue8ryBjq2NoNd9BWP98hg
+secret: 9ck3USRMlJuT0m6u4v6MeQJL4OZ2qeSuMvWQTicbwYk
