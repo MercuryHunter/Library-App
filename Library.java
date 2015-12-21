@@ -4,8 +4,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashMap;
 
+import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 public class Library {
-	private boolean DEBUG = true;
+	private boolean DEBUG = LibraryGUI.DEBUG;
 	private ArrayList<Book> library;
 	public static FileManager filemanager = new FileManager("masterlist.txt");
 
@@ -44,5 +52,31 @@ public class Library {
 			if(it.next().getISBN().equals(isbn)) return true;
 		}
 		return false;
+	}
+
+	public void downloadImages() throws IOException {
+		for(Book book : library){
+			String filename = "images/" + book.getISBN() + ".jpg";
+			File image = new File(filename);
+			if(!image.exists()){
+				URL link = new URL(book.getImage());
+				InputStream in = new BufferedInputStream(link.openStream());
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+				byte[] buffer = new byte[1024];
+				int n = 0;
+				while(-1!=(n=in.read(buffer)))
+					out.write(buffer, 0, n);
+				
+				out.close();
+				in.close();
+				byte[] response = out.toByteArray();
+
+				//image.createNewFile();
+				FileOutputStream fos = new FileOutputStream(image);
+				fos.write(response);
+				fos.close();
+			}
+		}
 	}
 }

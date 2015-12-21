@@ -21,7 +21,7 @@ public class Book {
 	private String image = "";
 	private boolean read, owned, wantToRead;
 
-	private boolean DEBUG = false;
+	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	// Constructor Via ISBN and Internet
 	public Book(String isbn){
