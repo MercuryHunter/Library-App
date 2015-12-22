@@ -82,7 +82,7 @@ public class Library {
 	}
 
 	// Downloads a books image file using their image url
-	public void downloadImage(Book book) throws IOException {
+	public static void downloadImage(Book book) throws IOException {
 		String filename = "images/" + book.getISBN() + ".jpg";
 		File image = new File(filename);
 		if(!image.exists()){

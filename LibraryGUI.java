@@ -59,14 +59,14 @@ public class LibraryGUI extends JFrame implements ActionListener {
 
 		add(pnlButtons, BorderLayout.NORTH);
 
-		// Initialise the library, get any images that may not have been downloaded.
+		// Initialise the library
 		library = new Library();
 		try{
 			library.downloadImages();
 		}
 		catch(IOException e){
 			System.err.println("Error downloading one or more image files");
-			e.printStackTrace();
+			if(DEBUG) e.printStackTrace();
 		}
 		library.sortBySeries();
 		
