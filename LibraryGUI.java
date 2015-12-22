@@ -2,12 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
 	public static final boolean DEBUG = false;
 
 	private Library library;
+	private JScrollPane scrollPane;
 	private JPanel pnlBook;
 
 	public LibraryGUI(){
@@ -17,6 +19,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		ToolTipManager.sharedInstance().setInitialDelay(200);
 
 		// Panel for the buttons at top Series, Author, Name, Search Box
 		JPanel pnlButtons = new JPanel();
@@ -27,6 +30,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		JButton btnAuthor = new JButton("Author");
 		JButton btnName = new JButton("Name");
 		// TODO: Add transparent text that disappears
+		// TODO: Letter by letter searching and removing.
 		JTextField txtSearch = new JTextField();
 		txtSearch.setActionCommand("Search");
 
@@ -55,6 +59,31 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			System.err.println("Error downloading one or more image files");
 			e.printStackTrace();
 		}
+		
+		addBooksToPanel(true);
+		scrollPane = new JScrollPane(pnlBook, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		add(scrollPane, BorderLayout.CENTER);
+	}
+
+	private void addBooksToPanel(boolean firstTime){
+		if(firstTime){
+			pnlBook = new JPanel();
+			pnlBook.setSize(375, 600);
+		}
+		else pnlBook.removeAll();
+
+		pnlBook.setLayout(new GridLayout(library.size()/6 + 1, 6, 0, 0));
+		for(Book book : library.getLibrary()){
+			BookGUI gui = new BookGUI(book);
+			pnlBook.add(gui);
+		}
+
+		pnlBook.revalidate();
+		pnlBook.repaint();
+		if(!firstTime) {
+			scrollPane.revalidate();
+			scrollPane.repaint();
+		}
 	}
 
 	// ActionListener method, use the class to handle action events, instead
@@ -62,25 +91,36 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 		if (command.equals("Add")){
 			String isbn = JOptionPane.showInputDialog(null, "Enter the ISBN here:");
-			isbn = isbn.replaceAll("[^0-9]", "");
-			Book temporary = new Book(isbn);
-			library.addBook(temporary);
+			if(isbn != null && isbn.length() > 0){
+				isbn = isbn.replaceAll("[^0-9A-Za-z]", "");
+				try{
+					Book temporary = new Book(isbn);
+					library.addBook(temporary);
+					addBooksToPanel(false);
+				}
+				catch(Exception exception){
+					JOptionPane.showMessageDialog(null, "Book not found.");
+				}
+			}
 		}
 		else if (command.equals("Series")){
-
+			library.sortBySeries();
+			addBooksToPanel(false);
 		}
 		else if (command.equals("Author")){
-
+			library.sortByAuthor();
+			addBooksToPanel(false);
 		}
 		else if (command.equals("Name")){
-
+			library.sortByName();
+			addBooksToPanel(false);
 		}
 		else if (command.equals("Search")){
 
 		}
 		else{
 			System.err.println("What did you just doooo...");
-			// TODO: Throw error?
+			System.exit(0);
 		}
 	}
 

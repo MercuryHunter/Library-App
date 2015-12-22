@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.net.URL;
+import java.io.FileNotFoundException;
 
 public class Book {
 	private String name, author, series;
@@ -24,7 +25,7 @@ public class Book {
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	// Constructor Via ISBN and Internet
-	public Book(String isbn){
+	public Book(String isbn) throws Exception {
 		this.isbn = isbn;
 		initialiseInformationISBN();
 	}
@@ -46,7 +47,7 @@ public class Book {
 	}
 	
 	// Method to initialise via ISBN information
-	private void initialiseInformationISBN(){
+	private void initialiseInformationISBN() throws Exception {
 		try{
 			String bookUrl = "https://www.goodreads.com/search/index.xml?key=bue8ryBjq2NoNd9BWP98hg&q=" + isbn;
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -81,10 +82,6 @@ public class Book {
 					System.out.println("Image:" + image);
 				}
 			}
-			else{
-				System.err.println("Error finding book");
-				return;
-			}
 
 			String seriesUrl = "https://www.goodreads.com/work/"+ workID +"/series?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
 			
@@ -105,11 +102,13 @@ public class Book {
 			read = false;
 			owned = false;
 			wantToRead = false;
+
+			Library.filemanager.writeBookFile(this);
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			if(DEBUG) e.printStackTrace();
+			throw e;
 		}
-		Library.filemanager.writeBookFile(this);
 	}
 
 	// Accessors
@@ -180,12 +179,18 @@ public class Book {
 
 	public static Comparator<Book> authorComparator = new Comparator<Book>(){
 		public int compare(Book one, Book two){
+			if(one.author.equals(two.author)) {
+				if(one.series.equals(two.series))
+					return one.positionInSeries - two.positionInSeries;
+				return one.series.compareTo(two.series);
+			}
 			return one.author.compareTo(two.author);
 		}
 	};
 
 	public static Comparator<Book> seriesComparator = new Comparator<Book>(){
 		public int compare(Book one, Book two){
+			if(one.series.equals(two.series)) return one.positionInSeries - two.positionInSeries;
 			return one.series.compareTo(two.series);
 		}
 	};

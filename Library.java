@@ -24,7 +24,10 @@ public class Library {
 		if(DEBUG) for(Book book : library) System.out.println(book);
 	}
 
-	public void addBook(Book newBook) { if(!containsBook(newBook)) library.add(newBook); }
+	public void addBook(Book newBook) throws IOException { 
+		if(!containsBook(newBook)) library.add(newBook); 
+		downloadImage(newBook);
+	}
 
 	public ArrayList<Book> getLibrary() { return library; }
 
@@ -37,6 +40,10 @@ public class Library {
 	// TODO
 	public void checkUpSeries() {
 		// Query the API and get new books
+	}
+
+	public int size(){
+		return library.size();
 	}
 
 	//Series, set of books
@@ -56,27 +63,31 @@ public class Library {
 
 	public void downloadImages() throws IOException {
 		for(Book book : library){
-			String filename = "images/" + book.getISBN() + ".jpg";
-			File image = new File(filename);
-			if(!image.exists()){
-				URL link = new URL(book.getImage());
-				InputStream in = new BufferedInputStream(link.openStream());
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
+			downloadImage(book);
+		}
+	}
 
-				byte[] buffer = new byte[1024];
-				int n = 0;
-				while(-1!=(n=in.read(buffer)))
-					out.write(buffer, 0, n);
-				
-				out.close();
-				in.close();
-				byte[] response = out.toByteArray();
+	public void downloadImage(Book book) throws IOException {
+		String filename = "images/" + book.getISBN() + ".jpg";
+		File image = new File(filename);
+		if(!image.exists()){
+			URL link = new URL(book.getImage());
+			InputStream in = new BufferedInputStream(link.openStream());
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-				//image.createNewFile();
-				FileOutputStream fos = new FileOutputStream(image);
-				fos.write(response);
-				fos.close();
-			}
+			byte[] buffer = new byte[1024];
+			int n = 0;
+			while(-1!=(n=in.read(buffer)))
+				out.write(buffer, 0, n);
+			
+			out.close();
+			in.close();
+			byte[] response = out.toByteArray();
+
+			//image.createNewFile();
+			FileOutputStream fos = new FileOutputStream(image);
+			fos.write(response);
+			fos.close();
 		}
 	}
 }
