@@ -8,8 +8,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileManager{
+
+	private boolean DEBUG = LibraryGUI.DEBUG;
+
 	private String mainFile;
 
 	public FileManager(String mainFile){ this.mainFile = mainFile; }
@@ -37,9 +42,28 @@ public class FileManager{
 		}
 	}
 
-	// TODO: Remove a book file
-	public void removeBookFile(int isbn){
+	// Removes a book's files, and its mention in the mainlist.
+	public void removeBookFiles(Book book){
+		try {
+			Files.delete(Paths.get("books/" + book.getISBN() + ".txt"));
+			Files.delete(Paths.get("images/" + book.getISBN() + ".jpg"));
 
+			// Who knows how inefficient this is, thankfully, this shouldn't be used much.
+			ArrayList<String> file = new ArrayList<String>();
+			BufferedReader br = new BufferedReader(new FileReader(mainFile));
+			String line;
+			while((line = br.readLine()) != null) if(!line.equals(book.getISBN())) file.add(line);
+			br.close();
+
+			PrintWriter pw = new PrintWriter(new FileWriter(mainFile, false));
+			for(String isbn : file) pw.println(isbn);
+			pw.close();
+
+		}
+		catch (Exception x) {
+			System.err.println("Error removing book files.");
+			if (DEBUG) x.printStackTrace();
+		}
 	}
 
 	// Get in all the books from the files, as the mainfile lists.
@@ -90,8 +114,8 @@ public class FileManager{
 		}
 		catch(Exception e){
 			System.err.println("Error reading in single book - " + isbn);
-			e.printStackTrace();
-			System.exit(0);
+			if (DEBUG) e.printStackTrace();
+			else System.exit(0);
 		}
 		return null;
 	}
