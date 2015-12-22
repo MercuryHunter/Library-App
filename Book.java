@@ -1,4 +1,11 @@
+/**
+ * A Book is like it's real counterpart, with a variety of attributes.
+ * As I am using the GoodReads API, the workID and seriesID are how one can
+ * communicate with the API.
+ */
+
 import java.util.Comparator;
+
 // For XML
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -9,9 +16,9 @@ import org.w3c.dom.Element;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.net.URL;
-import java.io.FileNotFoundException;
 
 public class Book {
+
 	private String name, author, series;
 	private String isbn; // They can start on 0...
 	private int positionInSeries;
@@ -30,7 +37,7 @@ public class Book {
 		initialiseInformationISBN();
 	}
 
-	// For books already stored
+	// Constructor for existing books
 	public Book(String name, String author, String isbn, int workID, String series, int positionInSeries, int seriesID, String description, boolean owned, boolean read, boolean wantToRead, String image){
 		this.name = name;
 		this.author = author;
@@ -162,21 +169,22 @@ public class Book {
 	public void setWantToRead(boolean wantToRead) { this.wantToRead = wantToRead; }
 
 	// Check if two books are equals
-	public boolean equals(Book other){
-		return this.isbn == other.isbn;
-	}
+	public boolean equals(Book other){ return this.isbn == other.isbn; }
 
+	// A string format of all the attributes of the object
 	public String toString(){
 		return String.format("<%s, %s, %s, %s, %d, %d, %d, %s, %s, %b, %b, %b>", name, author, series, isbn, positionInSeries, workID, seriesID, description, image, owned, read, wantToRead);
 	}
 
-	// Comparators for different sorts.
+	// Comparators for sorting by book name
 	public static Comparator<Book> nameComparator = new Comparator<Book>(){
 		public int compare(Book one, Book two){
 			return one.name.compareTo(two.name);
 		}
 	};
 
+	// Comparators for sorting by author. If authors are the same, sorts by series
+	// If series are the same, by position
 	public static Comparator<Book> authorComparator = new Comparator<Book>(){
 		public int compare(Book one, Book two){
 			if(one.author.equals(two.author)) {
@@ -188,6 +196,7 @@ public class Book {
 		}
 	};
 
+	// Comparators for sorting by series, if series are the same, by position
 	public static Comparator<Book> seriesComparator = new Comparator<Book>(){
 		public int compare(Book one, Book two){
 			if(one.series.equals(two.series)) return one.positionInSeries - two.positionInSeries;

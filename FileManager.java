@@ -1,3 +1,8 @@
+/**
+ * The FileManager handles the writing of books to file and their reading
+ * on startup of the application.
+ */
+
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,12 +12,10 @@ import java.io.FileWriter;
 public class FileManager{
 	private String mainFile;
 
-	public FileManager(String mainFile){
-		this.mainFile = mainFile;
-	}
+	public FileManager(String mainFile){ this.mainFile = mainFile; }
 	
-	// TODO: Test this.
-	public void writeBookFile(Book book){ // Get details
+	// Writes a book's information to file
+	public void writeBookFile(Book book){ 
 		try{
 			PrintWriter mainWriter = new PrintWriter(new FileWriter(mainFile, true));
 			mainWriter.println(book.getISBN());
@@ -34,12 +37,12 @@ public class FileManager{
 		}
 	}
 
-	// Remove a book file
+	// TODO: Remove a book file
 	public void removeBookFile(int isbn){
 
 	}
 
-	// Get in all the books from the files
+	// Get in all the books from the files, as the mainfile lists.
 	public ArrayList<Book> readInBooks(){
 		ArrayList<Book> books = new ArrayList<Book>();
 		try{
@@ -57,6 +60,7 @@ public class FileManager{
 		return books;
 	}
 
+	// Gets a single book's information by reading the file with the corresponding ISBN
 	public Book readInBook(String isbn){
 		try{
 			BufferedReader bookReader = new BufferedReader(new FileReader("books/" + isbn + ".txt"));

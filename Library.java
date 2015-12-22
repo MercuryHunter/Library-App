@@ -1,9 +1,15 @@
+/**
+ * A library is a sorted set of books, that can be sorted in different ways.
+ * It handles downloading of images of the books as well.
+ */
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.HashMap;
+//import java.util.HashMap;
 
+// Downloading Images
 import java.io.File;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,14 +19,15 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class Library {
+
 	private boolean DEBUG = LibraryGUI.DEBUG;
+
 	private ArrayList<Book> library;
 	public static FileManager filemanager = new FileManager("masterlist.txt");
 
-	// Initialise your Library
+	// Initialise the Library
 	public Library() {
 		library = filemanager.readInBooks();
-
 		if(DEBUG) for(Book book : library) System.out.println(book);
 	}
 
@@ -29,12 +36,19 @@ public class Library {
 		downloadImage(newBook);
 	}
 
+	// Gets the library in its currently sorted order
 	public ArrayList<Book> getLibrary() { return library; }
 
+	// Gets the size of the library
+	public int size() { return library.size(); }
+
+	// Implements sorting by Name using the comparator specificed in the book class
 	public void sortByName() { Collections.sort(library, Book.nameComparator); }
 
+	// Implements sorting by Author using the comparator specificed in the book class
 	public void sortByAuthor() { Collections.sort(library, Book.authorComparator); }
 
+	// Implements sorting by Series using the comparator specificed in the book class
 	public void sortBySeries() { Collections.sort(library, Book.seriesComparator); }
 
 	// TODO
@@ -42,17 +56,16 @@ public class Library {
 		// Query the API and get new books
 	}
 
-	public int size(){
-		return library.size();
-	}
-
-	//Series, set of books
+	/*
+	// TODO: SeriesGUI maybe?
 	public HashMap<String, ArrayList<Book>> getSeries(){
 		// Returns the books in their sets of series.
 		return null;
 	}
+	*/
 
-	public boolean containsBook(Book book){
+	// Checks if we have a book by checking its ISBN versus every book we have
+	public boolean containsBook(Book book) {
 		String isbn = book.getISBN();
 		Iterator<Book> it = library.iterator();
 		while(it.hasNext()){
@@ -61,12 +74,14 @@ public class Library {
 		return false;
 	}
 
+	// A method that tries to download images for all the books
 	public void downloadImages() throws IOException {
 		for(Book book : library){
 			downloadImage(book);
 		}
 	}
 
+	// Downloads a books image file using their image url
 	public void downloadImage(Book book) throws IOException {
 		String filename = "images/" + book.getISBN() + ".jpg";
 		File image = new File(filename);

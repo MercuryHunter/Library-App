@@ -1,3 +1,10 @@
+/**
+ * The LibraryGUI is the main GUI of the application, allowing a user to view
+ * all the books in the library, see them in different sorted orders,
+ * add new books and interact with them.
+ */
+
+// Swing elements, action listeners, exceptions
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,12 +13,14 @@ import java.io.FileNotFoundException;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
+	// The main DEBUG variable applied to all the classes
 	public static final boolean DEBUG = false;
 
 	private Library library;
 	private JScrollPane scrollPane;
 	private JPanel pnlBook;
 
+	// Sets up the Main GUI for viewing
 	public LibraryGUI(){
 		// The only constructor that will be used
 		setSize(600, 400);
@@ -59,12 +68,14 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			System.err.println("Error downloading one or more image files");
 			e.printStackTrace();
 		}
+		library.sortBySeries();
 		
 		addBooksToPanel(true);
 		scrollPane = new JScrollPane(pnlBook, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		add(scrollPane, BorderLayout.CENTER);
 	}
 
+	// The method to refresh the panel by adding all the books to it by making them BookGUIs
 	private void addBooksToPanel(boolean firstTime){
 		if(firstTime){
 			pnlBook = new JPanel();
@@ -81,14 +92,16 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		pnlBook.revalidate();
 		pnlBook.repaint();
 		if(!firstTime) {
+			// Do this so that the screen refreshes
 			scrollPane.revalidate();
 			scrollPane.repaint();
 		}
 	}
 
-	// ActionListener method, use the class to handle action events, instead
+	// ActionListener method, use the class to handle action events
 	public void actionPerformed(ActionEvent e){
 		String command = e.getActionCommand();
+		// Add a book with the given ISBN, should it exist
 		if (command.equals("Add")){
 			String isbn = JOptionPane.showInputDialog(null, "Enter the ISBN here:");
 			if(isbn != null && isbn.length() > 0){
@@ -124,6 +137,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		}
 	}
 
+	// Main method that just starts a dynamic instance of this class
 	public static void main(String[] args){
 		LibraryGUI gui = new LibraryGUI();
 		gui.setVisible(true);
