@@ -6,6 +6,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Comparator;
 
 public class BookGUI extends JLabel {
 	
@@ -13,8 +14,8 @@ public class BookGUI extends JLabel {
 	private Book book;
 
 	// The constructor that does the setting up
-	public BookGUI(Book b){
-		this.book = b;
+	public BookGUI(Book book){
+		this.book = book;
 
 		setPreferredSize(new Dimension(100, 155));
 
@@ -36,4 +37,30 @@ public class BookGUI extends JLabel {
 
 		setToolTipText(book.getName());
 	}
+
+	public Book getBook () { return book; };
+
+	public boolean equals (Book book) { return this.book.equals(book); }
+
+	// Comparators for sorting by book name
+	public static Comparator<BookGUI> nameComparator = new Comparator<BookGUI>(){
+		public int compare(BookGUI one, BookGUI two){
+			return Book.nameComparator.compare(one.book, two.book);
+		}
+	};
+
+	// Comparators for sorting by author. If authors are the same, sorts by series
+	// If series are the same, by position
+	public static Comparator<BookGUI> authorComparator = new Comparator<BookGUI>(){
+		public int compare(BookGUI one, BookGUI two){
+			return Book.authorComparator.compare(one.book, two.book);
+		}
+	};
+
+	// Comparators for sorting by series, if series are the same, by position
+	public static Comparator<BookGUI> seriesComparator = new Comparator<BookGUI>(){
+		public int compare(BookGUI one, BookGUI two){
+			return Book.seriesComparator.compare(one.book, two.book);
+		}
+	};
 }

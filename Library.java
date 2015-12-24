@@ -31,34 +31,34 @@ public class Library {
 
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
-	private ArrayList<Book> library;
+	//private ArrayList<Book> library;
+	private ArrayList<BookGUI> library;
 	public static FileManager filemanager = new FileManager("masterlist.txt");
 
 	// Initialise the Library
 	public Library() {
 		library = filemanager.readInBooks();
-		if(DEBUG) for(Book book : library) System.out.println(book);
+		if(DEBUG) for(BookGUI book : library) System.out.println(book.getBook());
 	}
 
-	public void addBook(Book newBook) throws IOException { 
-		if(!containsBook(newBook)) library.add(newBook); 
-		downloadImage(newBook);
+	public void addBook(Book book) throws IOException { 
+		if(!containsBook(book)) library.add(new BookGUI(book)); 
 	}
 
 	// Gets the library in its currently sorted order
-	public ArrayList<Book> getLibrary() { return library; }
+	public ArrayList<BookGUI> getLibrary() { return library; }
 
 	// Gets the size of the library
 	public int size() { return library.size(); }
 
 	// Implements sorting by Name using the comparator specificed in the book class
-	public void sortByName() { Collections.sort(library, Book.nameComparator); }
+	public void sortByName() { Collections.sort(library, BookGUI.nameComparator); }
 
 	// Implements sorting by Author using the comparator specificed in the book class
-	public void sortByAuthor() { Collections.sort(library, Book.authorComparator); }
+	public void sortByAuthor() { Collections.sort(library, BookGUI.authorComparator); }
 
 	// Implements sorting by Series using the comparator specificed in the book class
-	public void sortBySeries() { Collections.sort(library, Book.seriesComparator); }
+	public void sortBySeries() { Collections.sort(library, BookGUI.seriesComparator); }
 
 	// TODO
 	// Query the API and get new books
@@ -97,10 +97,11 @@ public class Library {
 
 	public void checkUpAllSeries() throws Exception {
 		HashSet<Integer> seriesChecked = new HashSet<Integer>();
-		ArrayList<Book> currentLibrary = library.clone();
-		Iterator<Book> it = currentLibrary.iterator();
+		@SuppressWarnings("unchecked")
+		ArrayList<BookGUI> currentLibrary = (ArrayList<BookGUI>)library.clone();
+		Iterator<BookGUI> it = currentLibrary.iterator();
 		while(it.hasNext()){
-			int seriesID = it.next().getSeriesID();
+			int seriesID = it.next().getBook().getSeriesID();
 			if(!seriesChecked.contains(seriesID)){
 				seriesChecked.add(seriesID);
 				checkUpSeries(seriesID);
@@ -118,26 +119,25 @@ public class Library {
 
 	// Checks if we have a book by checking its ISBN versus every book we have
 	public boolean containsBook (Book book) {
-		String isbn = book.getISBN();
-		Iterator<Book> it = library.iterator();
+		Iterator<BookGUI> it = library.iterator();
 		while(it.hasNext()){
-			if(it.next().getISBN().equals(isbn)) return true;
+			if(it.next().equals(book)) return true;
 		}
 		return false;
 	}
 
 	public boolean containsBook (int workID) {
-		Iterator<Book> it = library.iterator();
+		Iterator<BookGUI> it = library.iterator();
 		while(it.hasNext()){
-			if(it.next().getWorkID() == workID) return true;
+			if(it.next().getBook().getWorkID() == workID) return true;
 		}
 		return false;
 	}
 
 	// A method that tries to download images for all the books
 	public void downloadImages () throws IOException {
-		for(Book book : library){
-			downloadImage(book);
+		for(BookGUI book : library){
+			downloadImage(book.getBook());
 		}
 	}
 

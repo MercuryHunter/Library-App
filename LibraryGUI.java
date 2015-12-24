@@ -15,6 +15,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	
 	// The main DEBUG variable applied to all the classes
 	public static final boolean DEBUG = true;
+	private static final long serialVersionUID = 1L;
 
 	private Library library;
 	private JScrollPane scrollPane;
@@ -91,9 +92,8 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		else pnlBook.removeAll();
 
 		pnlBook.setLayout(new GridLayout(library.size()/6 + 1, 6, 0, 0));
-		for(Book book : library.getLibrary()){
-			BookGUI gui = new BookGUI(book);
-			pnlBook.add(gui);
+		for(BookGUI book : library.getLibrary()){
+			pnlBook.add(book);
 		}
 
 		pnlBook.revalidate();
@@ -110,11 +110,15 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 		// Add a book with the given ISBN, should it exist
 		if (command.equals("Add")){
-			String isbn = JOptionPane.showInputDialog(null, "Enter the ISBN here:");
-			if(isbn != null && isbn.length() > 0){
-				isbn = isbn.replaceAll("[^0-9A-Za-z]", "");
+			String reply = JOptionPane.showInputDialog(null, "Enter the input here:\n(ISBN: or Nothing)");
+			if(reply != null && reply.length() > 0){
+				boolean isISBN = false;
+				if(reply.contains("ISBN:")){
+					reply = reply.replaceAll("[^0-9A-Za-z]", "");
+					isISBN = true;
+				}
 				try{
-					Book temporary = new Book(isbn, true);
+					Book temporary = new Book(reply, isISBN);
 					library.addBook(temporary);
 					addBooksToPanel(false);
 				}

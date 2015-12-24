@@ -67,8 +67,8 @@ public class FileManager{
 	}
 
 	// Get in all the books from the files, as the mainfile lists.
-	public ArrayList<Book> readInBooks(){
-		ArrayList<Book> books = new ArrayList<Book>();
+	public ArrayList<BookGUI> readInBooks(){
+		ArrayList<BookGUI> books = new ArrayList<BookGUI>();
 		try{
 			BufferedReader mainReader = new BufferedReader(new FileReader(mainFile));
 			String isbn;
@@ -85,7 +85,7 @@ public class FileManager{
 	}
 
 	// Gets a single book's information by reading the file with the corresponding ISBN
-	public Book readInBook(String isbn){
+	public BookGUI readInBook(String isbn){
 		try{
 			BufferedReader bookReader = new BufferedReader(new FileReader("books/" + isbn + ".txt"));
 			String name = bookReader.readLine();
@@ -111,7 +111,7 @@ public class FileManager{
 
 			bookReader.close();
 
-			return new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image);
+			return new BookGUI(new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image));
 		}
 		catch(Exception e){
 			System.err.println("Error reading in single book - " + isbn);
