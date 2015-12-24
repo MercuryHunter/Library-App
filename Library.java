@@ -97,7 +97,8 @@ public class Library {
 
 	public void checkUpAllSeries() throws Exception {
 		HashSet<Integer> seriesChecked = new HashSet<Integer>();
-		Iterator<Book> it = library.iterator();
+		ArrayList<Book> currentLibrary = library.clone();
+		Iterator<Book> it = currentLibrary.iterator();
 		while(it.hasNext()){
 			int seriesID = it.next().getSeriesID();
 			if(!seriesChecked.contains(seriesID)){
