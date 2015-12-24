@@ -28,7 +28,7 @@ public class FileManager{
 			PrintWriter bookWriter = new PrintWriter(new FileWriter("books/" + book.getISBN() + ".txt"));
 			bookWriter.println(book.getName());
 			bookWriter.println(book.getAuthor());
-			bookWriter.println(book.getISBN() + "|" + book.getWorkID());
+			bookWriter.println(book.getISBN() + "|" + book.getWorkID() + "|" + book.getBookID());
 			bookWriter.println(book.getSeries() + "|" + book.getPositionInSeries() + "|" + book.getSeriesID());
 			bookWriter.println(book.getDescription());
 			bookWriter.println(book.getOwned());
@@ -94,6 +94,7 @@ public class FileManager{
 			String[] split = bookReader.readLine().split("\\|");
 			String isbnReadIn = split[0];
 			int workID = Integer.parseInt(split[1]);
+			int bookID = Integer.parseInt(split[2]);
 
 			split = bookReader.readLine().split("\\|");
 			String series = split[0];
@@ -110,7 +111,7 @@ public class FileManager{
 
 			bookReader.close();
 
-			return new Book(name, author, isbnReadIn, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image);
+			return new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image);
 		}
 		catch(Exception e){
 			System.err.println("Error reading in single book - " + isbn);

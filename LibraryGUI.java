@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 public class LibraryGUI extends JFrame implements ActionListener {
 	
 	// The main DEBUG variable applied to all the classes
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	private Library library;
 	private JScrollPane scrollPane;
@@ -69,6 +69,13 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			if(DEBUG) e.printStackTrace();
 		}
 		library.sortBySeries();
+		try {
+			library.checkUpAllSeries();
+		}
+		catch (Exception e){
+			System.err.println("Error in reading in new series");
+			if(DEBUG) e.printStackTrace();
+		}
 		
 		addBooksToPanel(true);
 		scrollPane = new JScrollPane(pnlBook, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -107,7 +114,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			if(isbn != null && isbn.length() > 0){
 				isbn = isbn.replaceAll("[^0-9A-Za-z]", "");
 				try{
-					Book temporary = new Book(isbn);
+					Book temporary = new Book(isbn, true);
 					library.addBook(temporary);
 					addBooksToPanel(false);
 				}

@@ -22,7 +22,7 @@ public class Book {
 	private String name, author, series;
 	private String isbn; // They can start on 0...
 	private int positionInSeries;
-	private int workID, seriesID;
+	private int bookID, workID, seriesID;
 	// Description not compulsory
 	private String description = "";
 	// Allowed to have no image - ""
@@ -31,14 +31,19 @@ public class Book {
 
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
-	// Constructor Via ISBN and Internet
-	public Book(String isbn) throws Exception {
-		this.isbn = isbn;
-		initialiseInformationISBN();
+	// Constructor that takes a text query and returns a book object
+	public Book(String text, boolean isIsbn) throws Exception {
+		if(isIsbn) this.isbn = isbn;
+		initialiseInformationQuery(text, isIsbn);
+	}
+
+	public Book(int bookID) throws Exception {
+		isbn = getIsbnFromBookID(bookID);
+		initialiseInformationQuery(isbn, true);
 	}
 
 	// Constructor for existing books
-	public Book(String name, String author, String isbn, int workID, String series, int positionInSeries, int seriesID, String description, boolean owned, boolean read, boolean wantToRead, String image){
+	public Book(String name, String author, String isbn, int bookID, int workID, String series, int positionInSeries, int seriesID, String description, boolean owned, boolean read, boolean wantToRead, String image){
 		this.name = name;
 		this.author = author;
 		this.isbn = isbn;
@@ -53,10 +58,23 @@ public class Book {
 		this.image = image;
 	}
 	
+	private String getIsbnFromBookID (int bookID) throws Exception {
+		String url = "https://www.goodreads.com/book/show/" + bookID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new URL(url).openStream());
+		
+		doc.getDocumentElement().normalize();
+		return doc.getElementsByTagName("isbn").item(0).getTextContent();
+	}
+
 	// Method to initialise via ISBN information
-	private void initialiseInformationISBN() throws Exception {
+	// TODO: FIX THIS UP IT COULD PROBABLY BE BETTER WITH MORE UNDERSTANDING
+	private void initialiseInformationQuery(String text, boolean isIsbn) throws Exception {
 		try{
-			String bookUrl = "https://www.goodreads.com/search/index.xml?key=bue8ryBjq2NoNd9BWP98hg&q=" + isbn;
+			String bookUrl = "https://www.goodreads.com/search/index.xml?key=bue8ryBjq2NoNd9BWP98hg&q=\"" + text + "\"";
+			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(new URL(bookUrl).openStream());
@@ -74,6 +92,10 @@ public class Book {
 				author = element.getElementsByTagName("name").item(0).getTextContent();
 				image = element.getElementsByTagName("image_url").item(0).getTextContent();
 				description = ".";
+
+				Node bookIDNode = doc.getElementsByTagName("best_book").item(0);
+				Element bookIDElement = (Element) bookIDNode;
+				bookID = Integer.parseInt(bookIDElement.getElementsByTagName("id").item(0).getTextContent());
 
 				String pattern = ".+\\(.+#(\\d+)\\)";
 				Pattern p = Pattern.compile(pattern);
@@ -110,6 +132,15 @@ public class Book {
 			owned = false;
 			wantToRead = false;
 
+			if(!isIsbn){
+				String url = "https://www.goodreads.com/book/show/" + bookID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+				doc = dBuilder.parse(new URL(url).openStream());
+				
+				doc.getDocumentElement().normalize();
+
+				isbn = doc.getElementsByTagName("isbn").item(0).getTextContent();
+			}
+
 			Library.filemanager.writeBookFile(this);
 		}
 		catch(Exception e){
@@ -130,6 +161,8 @@ public class Book {
 	public String getImage() { return image.equals("") ? "." : image; }
 
 	public String getISBN() { return isbn; }
+
+	public int getBookID() { return bookID; }
 
 	public int getWorkID() { return workID; }
 
@@ -156,6 +189,8 @@ public class Book {
 
 	public void setISBN(String isbn) { this.isbn = isbn; }
 
+	public void setBookID(int bookID) { this.bookID = bookID; }
+
 	public void setWorkID(int workID) { this.workID = workID; }
 
 	public void setSeriesID(int seriesID) { this.seriesID = seriesID; }
@@ -169,11 +204,11 @@ public class Book {
 	public void setWantToRead(boolean wantToRead) { this.wantToRead = wantToRead; }
 
 	// Check if two books are equals
-	public boolean equals(Book other){ return this.isbn == other.isbn; }
+	public boolean equals(Book other){ return this.workID == other.workID; }
 
 	// A string format of all the attributes of the object
 	public String toString(){
-		return String.format("<%s, %s, %s, %s, %d, %d, %d, %s, %s, %b, %b, %b>", name, author, series, isbn, positionInSeries, workID, seriesID, description, image, owned, read, wantToRead);
+		return String.format("<%s, %s, %s, %s, %d, %d, %d, %d, %s, %s, %b, %b, %b>", name, author, series, isbn, positionInSeries, bookID, workID, seriesID, description, image, owned, read, wantToRead);
 	}
 
 	// Comparators for sorting by book name

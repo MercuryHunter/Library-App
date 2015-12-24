@@ -1,6 +1,6 @@
 Book Name
 Author
-ISBN|GoodreadsWorkID
+ISBN|GoodreadsWorkID|GoodreadsBookID
 Series|Position|GoodreadsSeriesID
 Description (. if empty)
 Owned (bool)

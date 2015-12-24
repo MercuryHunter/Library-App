@@ -4,6 +4,7 @@
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,6 +18,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+// For XML
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 public class Library {
 
@@ -52,8 +61,50 @@ public class Library {
 	public void sortBySeries() { Collections.sort(library, Book.seriesComparator); }
 
 	// TODO
-	public void checkUpSeries() {
-		// Query the API and get new books
+	// Query the API and get new books
+	// TODO: FIX THIS UP IT COULD PROBABLY BE BETTER WITH MORE UNDERSTANDING
+	// TODO: Suggestion dialog for each book?
+	public void checkUpSeries(int seriesID) throws Exception {
+		String url = "https://www.goodreads.com/series/" + seriesID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new URL(url).openStream());
+		
+		doc.getDocumentElement().normalize();
+
+		int primaryCount = 0;
+		Node primaryCountNode = doc.getElementsByTagName("series").item(0);
+		if(primaryCountNode.getNodeType() == Node.ELEMENT_NODE){
+			Element element = (Element) primaryCountNode;
+			primaryCount = Integer.parseInt(element.getElementsByTagName("primary_work_count").item(0).getTextContent());
+		}
+		else throw new Exception();
+
+		NodeList series = doc.getElementsByTagName("series_work");
+		for(int i = 0; i < primaryCount; ++i){
+			Element seriesElement = (Element) series.item(i);
+			Node work = seriesElement.getElementsByTagName("work").item(0);
+			Node bestBook = seriesElement.getElementsByTagName("best_book").item(0);
+			
+			Element workElement = (Element) work;
+			Element bookElement = (Element) bestBook;
+
+			int workID = Integer.parseInt(workElement.getElementsByTagName("id").item(0).getTextContent());
+			int bookID = Integer.parseInt(bookElement.getElementsByTagName("id").item(0).getTextContent());
+			if(!containsBook(workID)) addBook(new Book(bookID));
+		}
+	}
+
+	public void checkUpAllSeries() throws Exception {
+		HashSet<Integer> seriesChecked = new HashSet<Integer>();
+		Iterator<Book> it = library.iterator();
+		while(it.hasNext()){
+			int seriesID = it.next().getSeriesID();
+			if(!seriesChecked.contains(seriesID)){
+				seriesChecked.add(seriesID);
+				checkUpSeries(seriesID);
+			}
+		}
 	}
 
 	/*
@@ -65,7 +116,7 @@ public class Library {
 	*/
 
 	// Checks if we have a book by checking its ISBN versus every book we have
-	public boolean containsBook(Book book) {
+	public boolean containsBook (Book book) {
 		String isbn = book.getISBN();
 		Iterator<Book> it = library.iterator();
 		while(it.hasNext()){
@@ -74,15 +125,23 @@ public class Library {
 		return false;
 	}
 
+	public boolean containsBook (int workID) {
+		Iterator<Book> it = library.iterator();
+		while(it.hasNext()){
+			if(it.next().getWorkID() == workID) return true;
+		}
+		return false;
+	}
+
 	// A method that tries to download images for all the books
-	public void downloadImages() throws IOException {
+	public void downloadImages () throws IOException {
 		for(Book book : library){
 			downloadImage(book);
 		}
 	}
 
 	// Downloads a books image file using their image url
-	public static void downloadImage(Book book) throws IOException {
+	public static void downloadImage (Book book) throws IOException {
 		String filename = "images/" + book.getISBN() + ".jpg";
 		File image = new File(filename);
 		if(!image.exists()){
