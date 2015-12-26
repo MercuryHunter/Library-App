@@ -33,34 +33,39 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ToolTipManager.sharedInstance().setInitialDelay(200);
 
-		// Panel for the buttons at top Series, Author, Name, Search Box
-		JPanel pnlButtons = new JPanel();
-		pnlButtons.setLayout(new GridLayout(1, 5)); //RxC
+		JMenuBar menuBar = new JMenuBar();
+		JMenu editMenu = new JMenu("Edit");
+		JMenu sortMenu = new JMenu("Sort");
+		menuBar.add(editMenu);
+		menuBar.add(sortMenu);
+
+		setJMenuBar(menuBar);
+
 		// TODO: Make custom button with different look? Allow for up/down sorting?
-		JButton btnAdd = new JButton("Add");
-		JButton btnSeries = new JButton("Series");
-		JButton btnAuthor = new JButton("Author");
-		JButton btnName = new JButton("Name");
-		// TODO: Add transparent text that disappears
+		JMenuItem add = new JMenuItem("Add");
+		JMenuItem remove = new JMenuItem("Remove");
+		editMenu.add(add);
+		editMenu.add(remove);
+
+		JMenuItem series = new JMenuItem("Series");
+		JMenuItem author = new JMenuItem("Author");
+		JMenuItem name = new JMenuItem("Name");
+		sortMenu.add(series);
+		sortMenu.add(author);
+		sortMenu.add(name);
+
+		// Add ActionListener to the menu items
+		add.addActionListener(this);
+		series.addActionListener(this);
+		author.addActionListener(this);
+		name.addActionListener(this);
+
+		// Search Text Field
 		// TODO: Letter by letter searching and removing.
 		txtSearch = new HintTextField("Search");
 		txtSearch.setActionCommand("Search");
-
-		// Add to Panel
-		pnlButtons.add(btnAdd);
-		pnlButtons.add(btnSeries);
-		pnlButtons.add(btnAuthor);
-		pnlButtons.add(btnName);
-		pnlButtons.add(txtSearch);
-
-		// Add ActionListener to the buttons and search field.
-		btnAdd.addActionListener(this);
-		btnSeries.addActionListener(this);
-		btnAuthor.addActionListener(this);
-		btnName.addActionListener(this);
 		txtSearch.addActionListener(this);
-
-		add(pnlButtons, BorderLayout.NORTH);
+		add(txtSearch, BorderLayout.NORTH);
 
 		// Initialise the library
 		library = new Library();
