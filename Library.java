@@ -41,7 +41,7 @@ public class Library {
 		if(DEBUG) for(BookGUI book : library) System.out.println(book.getBook());
 	}
 
-	public void addBook(Book book) throws IOException { 
+	public void addBook(Book book) { 
 		if(!containsBook(book)) library.add(new BookGUI(book)); 
 	}
 
@@ -64,11 +64,21 @@ public class Library {
 	// Query the API and get new books
 	// TODO: FIX THIS UP IT COULD PROBABLY BE BETTER WITH MORE UNDERSTANDING
 	// TODO: Suggestion dialog for each book?
-	public void checkUpSeries(int seriesID) throws Exception {
+	public void checkUpSeries(int seriesID) throws NullPointerException {
 		String url = "https://www.goodreads.com/series/" + seriesID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(new URL(url).openStream());
+
+		DocumentBuilderFactory dbFactory;
+		DocumentBuilder dBuilder;
+		Document doc;
+		try{
+			dbFactory = DocumentBuilderFactory.newInstance();
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(new URL(url).openStream());
+		}
+		catch(Exception x){
+			System.err.println("Error checking up series with ID: " + seriesID + ", failed to initialise connection to xml document.");
+			throw new NullPointerException("Can't initialise book information");
+		}
 		
 		doc.getDocumentElement().normalize();
 
@@ -78,10 +88,10 @@ public class Library {
 			Element element = (Element) primaryCountNode;
 			primaryCount = Integer.parseInt(element.getElementsByTagName("primary_work_count").item(0).getTextContent());
 		}
-		else throw new Exception();
+		else throw new NullPointerException("Error checking up series with ID: " + seriesID + ", no primary_work_count.");
 
 		NodeList series = doc.getElementsByTagName("series_work");
-		for(int i = 0; i < primaryCount; ++i){
+		for(int i = 0; i < series.getLength(); ++i){
 			Element seriesElement = (Element) series.item(i);
 			Node work = seriesElement.getElementsByTagName("work").item(0);
 			Node bestBook = seriesElement.getElementsByTagName("best_book").item(0);
@@ -91,11 +101,20 @@ public class Library {
 
 			int workID = Integer.parseInt(workElement.getElementsByTagName("id").item(0).getTextContent());
 			int bookID = Integer.parseInt(bookElement.getElementsByTagName("id").item(0).getTextContent());
-			if(!containsBook(workID)) addBook(new Book(bookID));
+			if (DEBUG) System.out.println("Series Adder: Trying to add bookID: " + bookID);
+			if (!containsBook(workID)) {
+				try {
+					Book newBook = new Book(bookID);
+					addBook(newBook);
+				}
+				catch (NullPointerException x) {
+					System.err.println("Book with book ID: " + bookID + " was not added to the library, as it failed to initialise.");
+				}
+			}
 		}
 	}
 
-	public void checkUpAllSeries() throws Exception {
+	public void checkUpAllSeries() throws NullPointerException {
 		HashSet<Integer> seriesChecked = new HashSet<Integer>();
 		@SuppressWarnings("unchecked")
 		ArrayList<BookGUI> currentLibrary = (ArrayList<BookGUI>)library.clone();
@@ -132,6 +151,16 @@ public class Library {
 			if(it.next().getBook().getWorkID() == workID) return true;
 		}
 		return false;
+	}
+
+	public ArrayList<BookGUI> search(String searchKey){
+		ArrayList<BookGUI> returnBooks = new ArrayList<BookGUI>();
+		Iterator<BookGUI> it = library.iterator();
+		while(it.hasNext()){
+			BookGUI current = it.next();
+			if(current.getBook().search(searchKey)) returnBooks.add(current);
+		}
+		return returnBooks;
 	}
 
 	// A method that tries to download images for all the books

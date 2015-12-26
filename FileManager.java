@@ -37,7 +37,7 @@ public class FileManager{
 			bookWriter.println(book.getImage());
 			bookWriter.close();
 		}
-		catch(Exception e){
+		catch(Exception x){
 			System.err.println("Error saving book");
 		}
 	}
@@ -77,7 +77,7 @@ public class FileManager{
 			}
 			mainReader.close();
 		}
-		catch(Exception e){
+		catch(Exception x){
 			System.err.println("Error reading in from master file");
 			System.exit(0);
 		}
@@ -113,9 +113,9 @@ public class FileManager{
 
 			return new BookGUI(new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image));
 		}
-		catch(Exception e){
+		catch(Exception x){
 			System.err.println("Error reading in single book - " + isbn);
-			if (DEBUG) e.printStackTrace();
+			if (DEBUG) x.printStackTrace();
 			else System.exit(0);
 		}
 		return null;

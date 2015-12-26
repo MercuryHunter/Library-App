@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
@@ -20,6 +21,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	private Library library;
 	private JScrollPane scrollPane;
 	private JPanel pnlBook;
+	HintTextField txtSearch;
 
 	// Sets up the Main GUI for viewing
 	public LibraryGUI(){
@@ -41,7 +43,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		JButton btnName = new JButton("Name");
 		// TODO: Add transparent text that disappears
 		// TODO: Letter by letter searching and removing.
-		JTextField txtSearch = new JTextField();
+		txtSearch = new HintTextField("Search");
 		txtSearch.setActionCommand("Search");
 
 		// Add to Panel
@@ -62,47 +64,46 @@ public class LibraryGUI extends JFrame implements ActionListener {
 
 		// Initialise the library
 		library = new Library();
-		try{
+		try {
 			library.downloadImages();
+			//library.checkUpAllSeries();
 		}
-		catch(IOException e){
-			System.err.println("Error downloading one or more image files");
-			if(DEBUG) e.printStackTrace();
+		catch (IOException x){
+			System.err.println("An error occurred while downloading one or more image files.");
+			if(DEBUG) x.printStackTrace();
+		}
+		catch (NullPointerException x){
+			System.err.println("Error in reading in new series - please check your internet connection.");
+			if(DEBUG) x.printStackTrace();
 		}
 		library.sortBySeries();
-		try {
-			library.checkUpAllSeries();
-		}
-		catch (Exception e){
-			System.err.println("Error in reading in new series");
-			if(DEBUG) e.printStackTrace();
-		}
-		
-		addBooksToPanel(true);
+
+		pnlBook = new JPanel();
+		pnlBook.setSize(375, 600);
 		scrollPane = new JScrollPane(pnlBook, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		add(scrollPane, BorderLayout.CENTER);
+		addBooksToPanel();
 	}
 
-	// The method to refresh the panel by adding all the books to it by making them BookGUIs
-	private void addBooksToPanel(boolean firstTime){
-		if(firstTime){
-			pnlBook = new JPanel();
-			pnlBook.setSize(375, 600);
-		}
-		else pnlBook.removeAll();
 
-		pnlBook.setLayout(new GridLayout(library.size()/6 + 1, 6, 0, 0));
-		for(BookGUI book : library.getLibrary()){
+	// The method to refresh the panel by adding all the books to it by making them BookGUIs
+	private void addBooksToPanel () {
+		addBooksToPanel(library.getLibrary());
+	}
+
+	private void addBooksToPanel (ArrayList<BookGUI> lib) {
+		pnlBook.removeAll();
+
+		pnlBook.setLayout(new GridLayout(lib.size()/6 + 1, 6, 0, 0));
+		for(BookGUI book : lib){
 			pnlBook.add(book);
 		}
 
 		pnlBook.revalidate();
 		pnlBook.repaint();
-		if(!firstTime) {
-			// Do this so that the screen refreshes
-			scrollPane.revalidate();
-			scrollPane.repaint();
-		}
+		// Do this so that the screen refreshes
+		scrollPane.revalidate();
+		scrollPane.repaint();
 	}
 
 	// ActionListener method, use the class to handle action events
@@ -115,12 +116,13 @@ public class LibraryGUI extends JFrame implements ActionListener {
 				boolean isISBN = false;
 				if(reply.contains("ISBN:")){
 					reply = reply.replaceAll("[^0-9A-Za-z]", "");
+					reply = reply.replace("ISBN:", "");
 					isISBN = true;
 				}
 				try{
 					Book temporary = new Book(reply, isISBN);
 					library.addBook(temporary);
-					addBooksToPanel(false);
+					addBooksToPanel();
 				}
 				catch(Exception exception){
 					JOptionPane.showMessageDialog(null, "Book not found.");
@@ -129,18 +131,18 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		}
 		else if (command.equals("Series")){
 			library.sortBySeries();
-			addBooksToPanel(false);
+			addBooksToPanel();
 		}
 		else if (command.equals("Author")){
 			library.sortByAuthor();
-			addBooksToPanel(false);
+			addBooksToPanel();
 		}
 		else if (command.equals("Name")){
 			library.sortByName();
-			addBooksToPanel(false);
+			addBooksToPanel();
 		}
 		else if (command.equals("Search")){
-
+			addBooksToPanel(library.search(txtSearch.getText()));
 		}
 		else{
 			System.err.println("What did you just doooo...");
@@ -152,5 +154,38 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	public static void main(String[] args){
 		LibraryGUI gui = new LibraryGUI();
 		gui.setVisible(true);
+	}
+}
+
+class HintTextField extends JTextField implements FocusListener {
+
+	private final String hint;
+	private boolean showingHint;
+
+	public HintTextField(final String hint) {
+		super(hint);
+		this.hint = hint;
+		this.showingHint = true;
+		super.addFocusListener(this);
+	}	
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		if(this.getText().isEmpty()) {
+			super.setText("");
+			showingHint = false;
+		}
+	}
+	@Override
+	public void focusLost(FocusEvent e) {
+		if(this.getText().isEmpty()) {
+			super.setText(hint);
+			showingHint = true;
+		}
+	}
+
+	@Override
+	public String getText() {
+		return showingHint ? "" : super.getText();
 	}
 }

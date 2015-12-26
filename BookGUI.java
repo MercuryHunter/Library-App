@@ -28,7 +28,7 @@ public class BookGUI extends JLabel {
 				Library.downloadImage(book);
 				imageExists = true;
 			}
-			catch(Exception e){
+			catch(Exception x){
 				if(DEBUG) System.err.println("Image not downloaded for book: " + book.getISBN());
 			}
 		}
@@ -42,22 +42,21 @@ public class BookGUI extends JLabel {
 
 	public boolean equals (Book book) { return this.book.equals(book); }
 
-	// Comparators for sorting by book name
+	// Comparator for sorting by book name
 	public static Comparator<BookGUI> nameComparator = new Comparator<BookGUI>(){
 		public int compare(BookGUI one, BookGUI two){
 			return Book.nameComparator.compare(one.book, two.book);
 		}
 	};
 
-	// Comparators for sorting by author. If authors are the same, sorts by series
-	// If series are the same, by position
+	// Comparator for sorting by author 
 	public static Comparator<BookGUI> authorComparator = new Comparator<BookGUI>(){
 		public int compare(BookGUI one, BookGUI two){
 			return Book.authorComparator.compare(one.book, two.book);
 		}
 	};
 
-	// Comparators for sorting by series, if series are the same, by position
+	// Comparator for sorting by series
 	public static Comparator<BookGUI> seriesComparator = new Comparator<BookGUI>(){
 		public int compare(BookGUI one, BookGUI two){
 			return Book.seriesComparator.compare(one.book, two.book);
