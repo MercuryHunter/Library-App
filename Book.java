@@ -128,11 +128,11 @@ public class Book {
 				positionInSeries = Integer.parseInt(m.group(1));
 			else positionInSeries = -1;
 
-			if(DEBUG){
-				System.out.println("Work ID:" + workID);
-				System.out.println("Title:" + name);
-				System.out.println("Name:" + author);
-				System.out.println("Image:" + image);
+			if (DEBUG) {
+				System.out.println("Work ID: " + workID);
+				System.out.println("Title: " + name);
+				System.out.println("Name: " + author);
+				System.out.println("Image: " + image);
 			}
 		}
 

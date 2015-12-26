@@ -1,9 +1,0 @@
-The Tales of Beedle the Bard
-J.K. Rowling
-0747599874|3007490|3950967
-Hogwarts Library|-1|82851
-.
-false
-false
-false
-https://d.gr-assets.com/books/1373467575m/3950967.jpg

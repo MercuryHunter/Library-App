@@ -15,8 +15,13 @@ import java.util.ArrayList;
 public class LibraryGUI extends JFrame implements ActionListener {
 	
 	// The main DEBUG variable applied to all the classes
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	private static final long serialVersionUID = 1L;
+
+	// Size of window, and from them, preferred sizes of books;
+	public static final int width = 630, height = 600;
+	public static final int numBooksInRow = 6;
+	public static final int preferredWidth = (width - 30)/numBooksInRow, preferredHeight = 155;
 
 	private Library library;
 	private JScrollPane scrollPane;
@@ -26,7 +31,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	// Sets up the Main GUI for viewing
 	public LibraryGUI(){
 		// The only constructor that will be used
-		setSize(600, 400);
+		setSize(width, height);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -36,8 +41,10 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu editMenu = new JMenu("Edit");
 		JMenu sortMenu = new JMenu("Sort");
+		JMenu findMenu = new JMenu("Find");
 		menuBar.add(editMenu);
 		menuBar.add(sortMenu);
+		menuBar.add(findMenu);
 
 		setJMenuBar(menuBar);
 
@@ -54,11 +61,20 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		sortMenu.add(author);
 		sortMenu.add(name);
 
+		JMenuItem findSeries = new JMenuItem("New Books By Series");
+		JMenuItem findAuthor = new JMenuItem("New Books By Author");
+		findMenu.add(findSeries);
+		findMenu.add(findAuthor);
+		findSeries.setActionCommand("Find Series");
+		findAuthor.setActionCommand("Find Author");
+
 		// Add ActionListener to the menu items
 		add.addActionListener(this);
 		series.addActionListener(this);
 		author.addActionListener(this);
 		name.addActionListener(this);
+		findSeries.addActionListener(this);
+		findAuthor.addActionListener(this);
 
 		// Search Text Field
 		// TODO: Letter by letter searching and removing.
@@ -71,16 +87,12 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		library = new Library();
 		try {
 			library.downloadImages();
-			//library.checkUpAllSeries();
 		}
 		catch (IOException x){
 			System.err.println("An error occurred while downloading one or more image files.");
 			if(DEBUG) x.printStackTrace();
 		}
-		catch (NullPointerException x){
-			System.err.println("Error in reading in new series - please check your internet connection.");
-			if(DEBUG) x.printStackTrace();
-		}
+		
 		library.sortBySeries();
 
 		pnlBook = new JPanel();
@@ -99,7 +111,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	private void addBooksToPanel (ArrayList<BookGUI> lib) {
 		pnlBook.removeAll();
 
-		pnlBook.setLayout(new GridLayout(lib.size()/6 + 1, 6, 0, 0));
+		pnlBook.setLayout(new GridLayout(lib.size()/numBooksInRow + 1, numBooksInRow, 0, 0));
 		for(BookGUI book : lib){
 			pnlBook.add(book);
 		}
@@ -115,7 +127,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e){
 		String command = e.getActionCommand();
 		// Add a book with the given ISBN, should it exist
-		if (command.equals("Add")){
+		if (command.equals("Add")) {
 			String reply = JOptionPane.showInputDialog(null, "Enter the input here:\n(ISBN: or Nothing)");
 			if(reply != null && reply.length() > 0){
 				boolean isISBN = false;
@@ -134,29 +146,44 @@ public class LibraryGUI extends JFrame implements ActionListener {
 				}
 			}
 		}
-		else if (command.equals("Series")){
+		else if (command.equals("Series")) {
 			library.sortBySeries();
 			addBooksToPanel();
 		}
-		else if (command.equals("Author")){
+		else if (command.equals("Author")) {
 			library.sortByAuthor();
 			addBooksToPanel();
 		}
-		else if (command.equals("Name")){
+		else if (command.equals("Name")) {
 			library.sortByName();
 			addBooksToPanel();
 		}
-		else if (command.equals("Search")){
+		else if (command.equals("Search")) {
 			addBooksToPanel(library.search(txtSearch.getText()));
 		}
-		else{
+		// TODO: Functionality
+		else if (command.equals("Find Series")) {
+			try {
+				library.checkUpAllSeries();
+				addBooksToPanel();
+			}
+			catch (NullPointerException x) {
+				System.err.println("Error in reading in new series - please check your internet connection.");
+				if(DEBUG) x.printStackTrace();
+			}
+		}
+		// TODO: Functionality
+		else if (command.equals("Find Author")) {
+
+		}
+		else {
 			System.err.println("What did you just doooo...");
 			System.exit(0);
 		}
 	}
 
 	// Main method that just starts a dynamic instance of this class
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		LibraryGUI gui = new LibraryGUI();
 		gui.setVisible(true);
 	}

@@ -1,9 +1,0 @@
-The Hogwarts Library
-J.K. Rowling
-1408834820|39839163|16177185
-Hogwarts Library|-1|82851
-.
-false
-false
-false
-https://d.gr-assets.com/books/1356217884m/16177185.jpg

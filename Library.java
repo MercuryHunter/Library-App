@@ -38,7 +38,7 @@ public class Library {
 	// Initialise the Library
 	public Library() {
 		library = filemanager.readInBooks();
-		if(DEBUG) for(BookGUI book : library) System.out.println(book.getBook());
+		if(DEBUG) { for(BookGUI book : library) System.out.println(book.getBook()); }
 	}
 
 	public void addBook(Book book) { 
@@ -60,9 +60,7 @@ public class Library {
 	// Implements sorting by Series using the comparator specificed in the book class
 	public void sortBySeries() { Collections.sort(library, BookGUI.seriesComparator); }
 
-	// TODO
 	// Query the API and get new books
-	// TODO: FIX THIS UP IT COULD PROBABLY BE BETTER WITH MORE UNDERSTANDING
 	// TODO: Suggestion dialog for each book?
 	public void checkUpSeries(int seriesID) throws NullPointerException {
 		String url = "https://www.goodreads.com/series/" + seriesID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
@@ -91,25 +89,35 @@ public class Library {
 		else throw new NullPointerException("Error checking up series with ID: " + seriesID + ", no primary_work_count.");
 
 		NodeList series = doc.getElementsByTagName("series_work");
-		for(int i = 0; i < series.getLength(); ++i){
+		for (int i = 0; i < series.getLength(); ++i) {
 			Element seriesElement = (Element) series.item(i);
-			Node work = seriesElement.getElementsByTagName("work").item(0);
-			Node bestBook = seriesElement.getElementsByTagName("best_book").item(0);
-			
-			Element workElement = (Element) work;
-			Element bookElement = (Element) bestBook;
-
-			int workID = Integer.parseInt(workElement.getElementsByTagName("id").item(0).getTextContent());
-			int bookID = Integer.parseInt(bookElement.getElementsByTagName("id").item(0).getTextContent());
-			if (DEBUG) System.out.println("Series Adder: Trying to add bookID: " + bookID);
-			if (!containsBook(workID)) {
+			String userPosition = seriesElement.getElementsByTagName("user_position").item(0).getTextContent();
+			if (!userPosition.equals("")) {
+				int userPos;
 				try {
-					Book newBook = new Book(bookID);
-					addBook(newBook);
+					userPos = Integer.parseInt(userPosition);
+					if(userPos > 0 && userPos <= primaryCount){
+						Node work = seriesElement.getElementsByTagName("work").item(0);
+						Node bestBook = seriesElement.getElementsByTagName("best_book").item(0);
+						
+						Element workElement = (Element) work;
+						Element bookElement = (Element) bestBook;
+
+						int workID = Integer.parseInt(workElement.getElementsByTagName("id").item(0).getTextContent());
+						int bookID = Integer.parseInt(bookElement.getElementsByTagName("id").item(0).getTextContent());
+						if (DEBUG) System.out.println("Series Adder: Trying to add bookID: " + bookID);
+						if (!containsBook(workID)) {
+							try {
+								Book newBook = new Book(bookID);
+								addBook(newBook);
+							}
+							catch (NullPointerException x) {
+								System.err.println("Book with book ID: " + bookID + " was not added to the library, as it failed to initialise.");
+							}
+						}
+					}
 				}
-				catch (NullPointerException x) {
-					System.err.println("Book with book ID: " + bookID + " was not added to the library, as it failed to initialise.");
-				}
+				catch(NumberFormatException x) {}
 			}
 		}
 	}

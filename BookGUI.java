@@ -8,8 +8,8 @@ import java.awt.*;
 import java.io.File;
 import java.util.Comparator;
 
-public class BookGUI extends JLabel {
-	
+public class BookGUI extends JButton {
+
 	private boolean DEBUG = LibraryGUI.DEBUG;
 	private Book book;
 
@@ -17,7 +17,7 @@ public class BookGUI extends JLabel {
 	public BookGUI(Book book){
 		this.book = book;
 
-		setPreferredSize(new Dimension(100, 155));
+		setPreferredSize(new Dimension(LibraryGUI.preferredWidth, LibraryGUI.preferredHeight));
 
 		// Checks if the image exists, and tries to download it if it doesn't.
 		// If it fails, uses a default image.
