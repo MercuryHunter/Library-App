@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
@@ -108,7 +109,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		addBooksToPanel(library.getLibrary());
 	}
 
-	private void addBooksToPanel (ArrayList<BookGUI> lib) {
+	private void addBooksToPanel (TreeSet<BookGUI> lib) {
 		pnlBook.removeAll();
 
 		pnlBook.setLayout(new GridLayout(lib.size()/numBooksInRow + 1, numBooksInRow, 0, 0));
@@ -136,13 +137,16 @@ public class LibraryGUI extends JFrame implements ActionListener {
 					reply = reply.replace("ISBN:", "");
 					isISBN = true;
 				}
-				try{
+				try {
 					Book temporary = new Book(reply, isISBN);
 					library.addBook(temporary);
 					addBooksToPanel();
 				}
-				catch(Exception exception){
+				catch (NullPointerException x) {
 					JOptionPane.showMessageDialog(null, "Book not found.");
+				}
+				catch (Exception x) {
+					JOptionPane.showMessageDialog(null, "An unknown error occured.");
 				}
 			}
 		}

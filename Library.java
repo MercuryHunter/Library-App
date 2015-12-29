@@ -3,7 +3,7 @@
  * It handles downloading of images of the books as well.
  */
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.Comparator;
 import java.util.Collections;
@@ -32,7 +32,8 @@ public class Library {
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	//private ArrayList<Book> library;
-	private ArrayList<BookGUI> library;
+	private TreeSet<BookGUI> library;
+	private static Comparator<BookGUI> currentComparator = BookGUI.seriesComparator;
 	public static FileManager filemanager = new FileManager("masterlist.txt");
 
 	// Initialise the Library
@@ -46,19 +47,37 @@ public class Library {
 	}
 
 	// Gets the library in its currently sorted order
-	public ArrayList<BookGUI> getLibrary() { return library; }
+	public TreeSet<BookGUI> getLibrary() { return library; }
+
+	// Gets the current comparator
+	public static Comparator<BookGUI> getCurrentComparator() { return currentComparator; }
 
 	// Gets the size of the library
 	public int size() { return library.size(); }
 
 	// Implements sorting by Name using the comparator specificed in the book class
-	public void sortByName() { Collections.sort(library, BookGUI.nameComparator); }
+	public void sortByName() {
+		TreeSet<BookGUI> temp = new TreeSet<BookGUI>(BookGUI.nameComparator);
+		currentComparator = BookGUI.nameComparator;
+		temp.addAll(library);
+		library = temp;
+	}
 
 	// Implements sorting by Author using the comparator specificed in the book class
-	public void sortByAuthor() { Collections.sort(library, BookGUI.authorComparator); }
+	public void sortByAuthor() {
+		TreeSet<BookGUI> temp = new TreeSet<BookGUI>(BookGUI.authorComparator);
+		currentComparator = BookGUI.authorComparator;
+		temp.addAll(library);
+		library = temp;
+	}
 
 	// Implements sorting by Series using the comparator specificed in the book class
-	public void sortBySeries() { Collections.sort(library, BookGUI.seriesComparator); }
+	public void sortBySeries() {
+		TreeSet<BookGUI> temp = new TreeSet<BookGUI>(BookGUI.seriesComparator);
+		currentComparator = BookGUI.seriesComparator;
+		temp.addAll(library);
+		library = temp;
+	}
 
 	// Query the API and get new books
 	// TODO: Suggestion dialog for each book?
@@ -125,7 +144,7 @@ public class Library {
 	public void checkUpAllSeries() throws NullPointerException {
 		HashSet<Integer> seriesChecked = new HashSet<Integer>();
 		@SuppressWarnings("unchecked")
-		ArrayList<BookGUI> currentLibrary = (ArrayList<BookGUI>)library.clone();
+		TreeSet<BookGUI> currentLibrary = (TreeSet<BookGUI>)library.clone();
 		Iterator<BookGUI> it = currentLibrary.iterator();
 		while(it.hasNext()){
 			int seriesID = it.next().getBook().getSeriesID();
@@ -161,8 +180,8 @@ public class Library {
 		return false;
 	}
 
-	public ArrayList<BookGUI> search(String searchKey){
-		ArrayList<BookGUI> returnBooks = new ArrayList<BookGUI>();
+	public TreeSet<BookGUI> search(String searchKey){
+		TreeSet<BookGUI> returnBooks = new TreeSet<BookGUI>(currentComparator);
 		Iterator<BookGUI> it = library.iterator();
 		while(it.hasNext()){
 			BookGUI current = it.next();

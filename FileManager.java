@@ -4,6 +4,7 @@
  */
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
@@ -67,8 +68,8 @@ public class FileManager{
 	}
 
 	// Get in all the books from the files, as the mainfile lists.
-	public ArrayList<BookGUI> readInBooks(){
-		ArrayList<BookGUI> books = new ArrayList<BookGUI>();
+	public TreeSet<BookGUI> readInBooks(){
+		TreeSet<BookGUI> books = new TreeSet<BookGUI>(Library.getCurrentComparator());
 		try{
 			BufferedReader mainReader = new BufferedReader(new FileReader(mainFile));
 			String isbn;
