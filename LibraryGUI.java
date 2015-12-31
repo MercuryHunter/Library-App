@@ -16,7 +16,7 @@ import java.util.TreeSet;
 public class LibraryGUI extends JFrame implements ActionListener {
 	
 	// The main DEBUG variable applied to all the classes
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	private static final long serialVersionUID = 1L;
 
 	// Size of window, and from them, preferred sizes of books;
@@ -133,19 +133,22 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			if(reply != null && reply.length() > 0){
 				boolean isISBN = false;
 				if(reply.contains("ISBN:")){
-					reply = reply.replaceAll("[^0-9A-Za-z]", "");
 					reply = reply.replace("ISBN:", "");
+					reply = reply.replaceAll("[^0-9A-Za-z]", "");
 					isISBN = true;
 				}
+				if(DEBUG) System.out.println("Trying to query: \"" + reply + "\"");
 				try {
 					Book temporary = new Book(reply, isISBN);
 					library.addBook(temporary);
 					addBooksToPanel();
 				}
 				catch (NullPointerException x) {
+					if(DEBUG) x.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Book not found.");
 				}
 				catch (Exception x) {
+					if(DEBUG) x.printStackTrace();
 					JOptionPane.showMessageDialog(null, "An unknown error occured.");
 				}
 			}

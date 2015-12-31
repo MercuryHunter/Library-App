@@ -32,9 +32,9 @@ public class Book {
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	// Constructor that takes a text query and returns a book object
-	public Book(String text, boolean isIsbn) throws NullPointerException {
-		if(isIsbn) this.isbn = isbn;
-		initialiseInformationQuery(text, isIsbn);
+	public Book(String query, boolean isIsbn) throws NullPointerException {
+		if(isIsbn) this.isbn = query;
+		initialiseInformationQuery(query, isIsbn);
 	}
 
 	public Book(int bookID) throws NullPointerException {
@@ -149,7 +149,7 @@ public class Book {
 		doc.getDocumentElement().normalize();
 
 		node = doc.getElementsByTagName("series").item(0);
-		if(node.getNodeType() == Node.ELEMENT_NODE){
+		if(node != null && node.getNodeType() == Node.ELEMENT_NODE){
 			Element element = (Element) node;
 
 			seriesID = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
