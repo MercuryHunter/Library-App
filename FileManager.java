@@ -18,15 +18,24 @@ public class FileManager{
 
 	private String mainFile;
 
-	public FileManager(String mainFile){ this.mainFile = mainFile; }
+	public FileManager(String mainFile) { this.mainFile = mainFile; }
 	
-	// Writes a book's information to file
-	public void writeBookFile(Book book){ 
-		try{
+	public void writeBookFile(Book book) {
+		try {
 			PrintWriter mainWriter = new PrintWriter(new FileWriter(mainFile, true));
 			mainWriter.println(book.getISBN());
 			mainWriter.close();
-			PrintWriter bookWriter = new PrintWriter(new FileWriter("books/" + book.getISBN() + ".txt"));
+			editBookFile(book);
+		}
+		catch(Exception x){
+			System.err.println("Error saving book");
+		}
+	}
+
+	// Writes a book's information to file
+	public void editBookFile(Book book) { 
+		try {
+			PrintWriter bookWriter = new PrintWriter(new FileWriter("books/" + book.getISBN() + ".txt", false));
 			bookWriter.println(book.getName());
 			bookWriter.println(book.getAuthor());
 			bookWriter.println(book.getISBN() + "|" + book.getWorkID() + "|" + book.getBookID());
@@ -45,15 +54,16 @@ public class FileManager{
 
 	// Removes a book's files, and its mention in the mainlist.
 	public void removeBookFiles(Book book){
+		String bookIsbn = book.getISBN();
 		try {
-			Files.delete(Paths.get("books/" + book.getISBN() + ".txt"));
-			Files.delete(Paths.get("images/" + book.getISBN() + ".jpg"));
+			Files.delete(Paths.get("books/" + bookIsbn + ".txt"));
+			Files.delete(Paths.get("images/" + bookIsbn + ".jpg"));
 
 			// Who knows how inefficient this is, thankfully, this shouldn't be used much.
 			ArrayList<String> file = new ArrayList<String>();
 			BufferedReader br = new BufferedReader(new FileReader(mainFile));
 			String line;
-			while((line = br.readLine()) != null) if(!line.equals(book.getISBN())) file.add(line);
+			while((line = br.readLine()) != null) if(!line.equals(bookIsbn)) file.add(line);
 			br.close();
 
 			PrintWriter pw = new PrintWriter(new FileWriter(mainFile, false));

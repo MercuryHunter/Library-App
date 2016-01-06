@@ -125,7 +125,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	}
 
 	// ActionListener method, use the class to handle action events
-	public void actionPerformed(ActionEvent e){
+	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		// Add a book with the given ISBN, should it exist
 		if (command.equals("Add")) {

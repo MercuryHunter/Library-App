@@ -5,10 +5,11 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.util.Comparator;
 
-public class BookGUI extends JButton {
+public class BookGUI extends JButton implements ActionListener {
 
 	private boolean DEBUG = LibraryGUI.DEBUG;
 	private Book book;
@@ -36,6 +37,7 @@ public class BookGUI extends JButton {
 		else setIcon(new ImageIcon("images/default.jpg"));
 
 		setToolTipText(book.getName());
+		addActionListener(this);
 	}
 
 	public Book getBook () { return book; };
@@ -62,4 +64,8 @@ public class BookGUI extends JButton {
 			return Book.seriesComparator.compare(one.book, two.book);
 		}
 	};
+
+	public void actionPerformed(ActionEvent e) {
+		new FullBookGUI(book).setVisible(true);
+	}
 }
