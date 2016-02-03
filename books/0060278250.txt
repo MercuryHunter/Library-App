@@ -1,9 +1,9 @@
 Abhorsen (Abhorsen, #3)
 Garth Nix
-0060278250|2339177|334643
+0060278250|2339177|0
 Abhorsen|3|44888
 .
-false
-false
+true
+true
 false
 https://d.gr-assets.com/books/1401683669m/334643.jpg

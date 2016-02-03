@@ -34,7 +34,9 @@ public class Book {
 	// Constructor that takes a text query and returns a book object
 	public Book(String query, boolean isIsbn) throws NullPointerException {
 		if(isIsbn) this.isbn = query;
-		initialiseInformationQuery(query, isIsbn);
+		if(!Library.filemanager.deletedBook(query))
+			initialiseInformationQuery(query, isIsbn);
+		else throw new NullPointerException();
 	}
 
 	public Book(int bookID) throws NullPointerException {

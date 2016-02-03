@@ -8,6 +8,8 @@ import java.util.TreeSet;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,19 +19,30 @@ public class FileManager{
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	private String mainFile;
+	private String deleteFile;
+	private Library library;
+	private LibraryGUI libraryGUI;
 
-	public FileManager(String mainFile) { this.mainFile = mainFile; }
+	public FileManager(String mainFile, String deleteFile, Library library, LibraryGUI libraryGUI) { 
+		this.mainFile = mainFile;
+		this.deleteFile = deleteFile;
+		this.library = library;
+		this.libraryGUI = libraryGUI;
+	}
 	
 	public void writeBookFile(Book book) {
-		try {
-			PrintWriter mainWriter = new PrintWriter(new FileWriter(mainFile, true));
-			mainWriter.println(book.getISBN());
-			mainWriter.close();
-			editBookFile(book);
+		if(!deletedBook(book)){
+			try {
+				PrintWriter mainWriter = new PrintWriter(new FileWriter(mainFile, true));
+				mainWriter.println(book.getISBN());
+				mainWriter.close();
+				editBookFile(book);
+			}
+			catch(Exception x){
+				System.err.println("Error saving book");
+			}
 		}
-		catch(Exception x){
-			System.err.println("Error saving book");
-		}
+		else System.out.println("Book has been deleted before.");
 	}
 
 	// Writes a book's information to file
@@ -52,8 +65,37 @@ public class FileManager{
 		}
 	}
 
+	public boolean deletedBook(Book book) {
+		String isbn = book.getISBN();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(deleteFile));
+			String line;
+			while((line = br.readLine()) != null) if(line.equals(isbn)) return true;
+			br.close();
+		}
+		catch(Exception x) {
+			System.err.println("Couldn't read deleted book list. Critical Error.");
+			System.exit(0);
+		}
+		return false;
+	}
+
+	public boolean deletedBook(String isbn) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(deleteFile));
+			String line;
+			while((line = br.readLine()) != null) if(line.equals(isbn)) return true;
+			br.close();
+		}
+		catch(Exception x) {
+			System.err.println("Couldn't read deleted book list. Critical Error.");
+			System.exit(0);
+		}
+		return false;
+	}
+
 	// Removes a book's files, and its mention in the mainlist.
-	public void removeBookFiles(Book book){
+	public void removeBookFiles(Book book) {
 		String bookIsbn = book.getISBN();
 		try {
 			Files.delete(Paths.get("books/" + bookIsbn + ".txt"));
@@ -70,6 +112,9 @@ public class FileManager{
 			for(String isbn : file) pw.println(isbn);
 			pw.close();
 
+			PrintWriter deleteWriter = new PrintWriter(new FileWriter(deleteFile, true));
+			deleteWriter.println(bookIsbn);
+			deleteWriter.close();
 		}
 		catch (Exception x) {
 			System.err.println("Error removing book files.");
@@ -122,7 +167,7 @@ public class FileManager{
 
 			bookReader.close();
 
-			return new BookGUI(new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image));
+			return new BookGUI(new Book(name, author, isbnReadIn, bookID, workID, series, positionInSeries, seriesID, description, owned, read, wantToRead, image), library, libraryGUI);
 		}
 		catch(Exception x){
 			System.err.println("Error reading in single book - " + isbn);

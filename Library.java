@@ -32,18 +32,25 @@ public class Library {
 	private boolean DEBUG = LibraryGUI.DEBUG;
 
 	//private ArrayList<Book> library;
+	private LibraryGUI libraryGUI;
 	private TreeSet<BookGUI> library;
 	private static Comparator<BookGUI> currentComparator = BookGUI.seriesComparator;
-	public static FileManager filemanager = new FileManager("masterlist.txt");
+	public static FileManager filemanager;
 
 	// Initialise the Library
-	public Library() {
+	public Library(LibraryGUI libraryGUI) {
+		this.libraryGUI = libraryGUI;
+		filemanager = new FileManager("masterlist.txt", "deleted.txt", this, libraryGUI);
 		library = filemanager.readInBooks();
 		if(DEBUG) { for(BookGUI book : library) System.out.println(book.getBook()); }
 	}
 
 	public void addBook(Book book) { 
-		if(!containsBook(book)) library.add(new BookGUI(book)); 
+		if(!containsBook(book)) library.add(new BookGUI(book, this, libraryGUI)); 
+	}
+
+	public void removeBook(BookGUI book) {
+		library.remove(book);
 	}
 
 	// Gets the library in its currently sorted order

@@ -14,8 +14,11 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 	private boolean DEBUG = LibraryGUI.DEBUG;
 	private Book book;
 	private JCheckBox read, owned, wantToRead;
+	private Library library;
+	private LibraryGUI libraryGUI;
+	private BookGUI bookGUI;
 
-	public FullBookGUI(Book book) {
+	public FullBookGUI(Book book, Library library, LibraryGUI libraryGUI, BookGUI bookGUI) {
 		setSize(400, 300);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
@@ -23,6 +26,9 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.book = book;
+		this.library = library;
+		this.libraryGUI = libraryGUI;
+		this.bookGUI = bookGUI;
 
 		// Image
 		JLabel image = new JLabel();
@@ -36,16 +42,24 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 
 		// Main Details Panel
 		JPanel infoPanel = new JPanel(new GridLayout(3, 1));
-		JLabel title = new JLabel(book.getName());
-		JLabel author = new JLabel(book.getAuthor());
+		JLabel title = new JLabel(book.getName(), SwingConstants.CENTER);
+		title.setFont(new Font("Serif", Font.BOLD, 32));
+		JLabel author = new JLabel(book.getAuthor(), SwingConstants.CENTER);
+		author.setFont(new Font("Serif", Font.BOLD, 24));
 		infoPanel.add(title);
 		infoPanel.add(author);
 
 		// Sub boolean panel
-		JPanel boolPanel = new JPanel(new GridLayout(1, 3));
+		JPanel boolPanel = new JPanel(new GridLayout(3, 1));
 		read = new JCheckBox("Read: ", book.getRead());
+		read.setHorizontalTextPosition(SwingConstants.LEFT);
+		read.setHorizontalAlignment(SwingConstants.CENTER);
 		owned = new JCheckBox("Owned: ", book.getOwned());
+		owned.setHorizontalTextPosition(SwingConstants.LEFT);
+		owned.setHorizontalAlignment(SwingConstants.CENTER);
 		wantToRead = new JCheckBox("Want to Read: ", book.getWantToRead());
+		wantToRead.setHorizontalTextPosition(SwingConstants.LEFT);
+		wantToRead.setHorizontalAlignment(SwingConstants.CENTER);
 		read.addItemListener(this);
 		owned.addItemListener(this);
 		wantToRead.addItemListener(this);
@@ -74,6 +88,8 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 		String command = e.getActionCommand();
 		if (command.equals("Delete")) {
 			Library.filemanager.removeBookFiles(book);
+			library.removeBook(bookGUI);
+			libraryGUI.addBooksToPanel();
 			this.dispose();
 		}
 		else if (command.equals("Save")) {

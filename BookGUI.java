@@ -13,10 +13,14 @@ public class BookGUI extends JButton implements ActionListener {
 
 	private boolean DEBUG = LibraryGUI.DEBUG;
 	private Book book;
+	private Library library;
+	private LibraryGUI libraryGUI;
 
 	// The constructor that does the setting up
-	public BookGUI(Book book){
+	public BookGUI(Book book, Library library, LibraryGUI libraryGUI){
 		this.book = book;
+		this.library = library;
+		this.libraryGUI = libraryGUI;
 
 		setPreferredSize(new Dimension(LibraryGUI.preferredWidth, LibraryGUI.preferredHeight));
 
@@ -66,6 +70,6 @@ public class BookGUI extends JButton implements ActionListener {
 	};
 
 	public void actionPerformed(ActionEvent e) {
-		new FullBookGUI(book).setVisible(true);
+		new FullBookGUI(book, library, libraryGUI, this).setVisible(true);
 	}
 }

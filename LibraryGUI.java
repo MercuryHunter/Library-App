@@ -85,7 +85,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		add(txtSearch, BorderLayout.NORTH);
 
 		// Initialise the library
-		library = new Library();
+		library = new Library(this);
 		try {
 			library.downloadImages();
 		}
@@ -105,7 +105,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 
 
 	// The method to refresh the panel by adding all the books to it by making them BookGUIs
-	private void addBooksToPanel () {
+	public void addBooksToPanel () {
 		addBooksToPanel(library.getLibrary());
 	}
 
@@ -145,7 +145,7 @@ public class LibraryGUI extends JFrame implements ActionListener {
 				}
 				catch (NullPointerException x) {
 					if(DEBUG) x.printStackTrace();
-					JOptionPane.showMessageDialog(null, "Book not found.");
+					JOptionPane.showMessageDialog(null, "Book not found, or book was deleted.");
 				}
 				catch (Exception x) {
 					if(DEBUG) x.printStackTrace();
