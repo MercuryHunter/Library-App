@@ -1,3 +1,5 @@
+package main;
+
 /**
  * A library is a sorted set of books, that can be sorted in different ways.
  * It handles downloading of images of the books as well.
@@ -26,6 +28,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class Library {
 

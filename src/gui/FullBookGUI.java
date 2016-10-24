@@ -1,3 +1,5 @@
+package gui;
+
 /**
  * The FullBookGUI allows for a window to be displayed with a book's properties
  * It allows for the editing of the boolean values attached to the book
@@ -8,6 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class FullBookGUI extends JFrame implements ActionListener, ItemListener {
 	

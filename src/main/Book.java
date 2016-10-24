@@ -1,3 +1,5 @@
+package main;
+
 /**
  * A Book is like it's real counterpart, with a variety of attributes.
  * As I am using the GoodReads API, the workID and seriesID are how one can
@@ -16,6 +18,11 @@ import org.w3c.dom.Element;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.net.URL;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class Book {
 

@@ -1,3 +1,5 @@
+package gui;
+
 /**
  * A BookGUI is a wrapper for the Book that allows it to be shown on a GUI through a label.
  * Sets up all the basics.
@@ -8,6 +10,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.Comparator;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class BookGUI extends JButton implements ActionListener {
 

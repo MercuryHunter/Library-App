@@ -1,3 +1,5 @@
+package gui;
+
 /**
  * The LibraryGUI is the main GUI of the application, allowing a user to view
  * all the books in the library, see them in different sorted orders,
@@ -12,6 +14,11 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.TreeSet;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
@@ -113,12 +120,12 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		pnlBook.removeAll();
 
 		pnlBook.setLayout(new GridLayout(lib.size()/numBooksInRow + 1, numBooksInRow, 0, 0));
-		for(BookGUI book : lib){
+		for(BookGUI book : lib)
 			pnlBook.add(book);
-		}
 
 		pnlBook.revalidate();
 		pnlBook.repaint();
+
 		// Do this so that the screen refreshes
 		scrollPane.revalidate();
 		scrollPane.repaint();
@@ -193,38 +200,5 @@ public class LibraryGUI extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		LibraryGUI gui = new LibraryGUI();
 		gui.setVisible(true);
-	}
-}
-
-class HintTextField extends JTextField implements FocusListener {
-
-	private final String hint;
-	private boolean showingHint;
-
-	public HintTextField(final String hint) {
-		super(hint);
-		this.hint = hint;
-		this.showingHint = true;
-		super.addFocusListener(this);
-	}	
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		if(this.getText().isEmpty()) {
-			super.setText("");
-			showingHint = false;
-		}
-	}
-	@Override
-	public void focusLost(FocusEvent e) {
-		if(this.getText().isEmpty()) {
-			super.setText(hint);
-			showingHint = true;
-		}
-	}
-
-	@Override
-	public String getText() {
-		return showingHint ? "" : super.getText();
 	}
 }

@@ -1,3 +1,5 @@
+package util;
+
 /**
  * The FileManager handles the writing of books to file and their reading
  * on startup of the application.
@@ -14,6 +16,11 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.File;
+
+// My other classes - this must be fixed, why's it all so entangled
+import gui.*;
+import main.*;
+import util.*;
 
 public class FileManager{
 
