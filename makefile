@@ -19,7 +19,7 @@ vpath %.class $(BINDIR)/gui:$(BINDIR)/main:$(BINDIR)/util
 all: 
 	javac $(JFLAGS) $(SRCDIR)/main/Book.java $(SRCDIR)/main/Library.java \
 	$(SRCDIR)/gui/BookGUI.java $(SRCDIR)/gui/FullBookGUI.java $(SRCDIR)/gui/LibraryGUI.java $(SRCDIR)/gui/HintTextField.java \
-	$(SRCDIR)/util/FileManager.java
+	$(SRCDIR)/util/FileManager.java $(SRCDIR)/util/Config.java
 
 run: all
 	java -cp $(BINDIR) gui.LibraryGUI

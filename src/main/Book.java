@@ -70,7 +70,7 @@ public class Book {
 	
 	// Given a bookID gets the ISBN of the book
 	private String getIsbnFromBookID (int bookID) throws NullPointerException {
-		String url = "https://www.goodreads.com/book/show/" + bookID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+		String url = "https://www.goodreads.com/book/show/" + bookID + "?format=xml&key=" + Config.getKey();
 
 		DocumentBuilderFactory dbFactory;
 		DocumentBuilder dBuilder;
@@ -97,7 +97,7 @@ public class Book {
 	// Method to initialise via ISBN information
 	// TODO: FIX THIS UP IT COULD PROBABLY BE BETTER WITH MORE UNDERSTANDING
 	private void initialiseInformationQuery(String query, boolean isIsbn) throws NullPointerException {
-		String bookUrl = "https://www.goodreads.com/search/index.xml?key=bue8ryBjq2NoNd9BWP98hg&q=\"" + query + "\"";
+		String bookUrl = "https://www.goodreads.com/search/index.xml?key=" + Config.getKey() + "&q=\"" + query + "\"";
 		
 		DocumentBuilderFactory dbFactory;
 		DocumentBuilder dBuilder;
@@ -145,7 +145,7 @@ public class Book {
 			}
 		}
 
-		String seriesUrl = "https://www.goodreads.com/work/"+ workID +"/series?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+		String seriesUrl = "https://www.goodreads.com/work/"+ workID +"/series?format=xml&key=" + Config.getKey();
 		
 		try{
 			doc = dBuilder.parse(new URL(seriesUrl).openStream());

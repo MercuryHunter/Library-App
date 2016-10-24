@@ -96,7 +96,7 @@ public class Library {
 	// Query the API and get new books
 	// TODO: Suggestion dialog for each book?
 	public void checkUpSeries(int seriesID) throws NullPointerException {
-		String url = "https://www.goodreads.com/series/" + seriesID + "?format=xml&key=bue8ryBjq2NoNd9BWP98hg";
+		String url = "https://www.goodreads.com/series/" + seriesID + "?format=xml&key=" + Config.getKey();
 
 		DocumentBuilderFactory dbFactory;
 		DocumentBuilder dBuilder;
