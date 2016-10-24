@@ -25,3 +25,6 @@ run: all
 
 clean:
 	@rm -f $(BINDIR)/*.class
+	@rm -rf books
+	@rm -rf images
+	@rm masterlist.txt deleted.txt
