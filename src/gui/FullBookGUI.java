@@ -18,7 +18,7 @@ import util.*;
 
 public class FullBookGUI extends JFrame implements ActionListener, ItemListener {
 	
-	private boolean DEBUG = LibraryGUI.DEBUG;
+	private boolean DEBUG = true;
 	private Book book;
 	private JCheckBox read, owned, wantToRead;
 	private Library library;
@@ -31,6 +31,7 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		requestFocus();
 
 		this.book = book;
 		this.library = library;
@@ -96,6 +97,8 @@ public class FullBookGUI extends JFrame implements ActionListener, ItemListener 
 		if (command.equals("Delete")) {
 			Library.filemanager.removeBookFiles(book);
 			library.removeBook(bookGUI);
+			// This is the only reason BookGUI, Library and this have libraryGUI...
+			// Can't seem to get it to fix with focus changes though...
 			libraryGUI.addBooksToPanel();
 			this.dispose();
 		}

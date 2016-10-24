@@ -36,7 +36,7 @@ public class Book {
 	private String image = "";
 	private boolean read, owned, wantToRead;
 
-	private boolean DEBUG = LibraryGUI.DEBUG;
+	private boolean DEBUG = true;
 
 	// Constructor that takes a text query and returns a book object
 	public Book(String query, boolean isIsbn) throws NullPointerException {

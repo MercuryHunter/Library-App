@@ -36,7 +36,7 @@ import util.*;
 
 public class Library {
 
-	private boolean DEBUG = LibraryGUI.DEBUG;
+	private boolean DEBUG = true;
 
 	//private ArrayList<Book> library;
 	private LibraryGUI libraryGUI;

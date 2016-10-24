@@ -24,7 +24,7 @@ import util.*;
 
 public class FileManager{
 
-	private boolean DEBUG = LibraryGUI.DEBUG;
+	private boolean DEBUG = true;
 
 	private String mainFile;
 	private String deleteFile;

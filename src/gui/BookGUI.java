@@ -18,7 +18,7 @@ import util.*;
 
 public class BookGUI extends JButton implements ActionListener {
 
-	private boolean DEBUG = LibraryGUI.DEBUG;
+	private boolean DEBUG = true;
 	private Book book;
 	private Library library;
 	private LibraryGUI libraryGUI;
@@ -51,6 +51,10 @@ public class BookGUI extends JButton implements ActionListener {
 		addActionListener(this);
 	}
 
+	public void actionPerformed(ActionEvent e) {
+		new FullBookGUI(book, library, libraryGUI, this).setVisible(true);
+	}
+
 	public Book getBook () { return book; };
 
 	public boolean equals (Book book) { return this.book.equals(book); }
@@ -75,8 +79,4 @@ public class BookGUI extends JButton implements ActionListener {
 			return Book.seriesComparator.compare(one.book, two.book);
 		}
 	};
-
-	public void actionPerformed(ActionEvent e) {
-		new FullBookGUI(book, library, libraryGUI, this).setVisible(true);
-	}
 }

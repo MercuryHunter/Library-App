@@ -22,7 +22,6 @@ import util.*;
 
 public class LibraryGUI extends JFrame implements ActionListener {
 	
-	// The main DEBUG variable applied to all the classes
 	public static final boolean DEBUG = true;
 	private static final long serialVersionUID = 1L;
 
@@ -120,8 +119,20 @@ public class LibraryGUI extends JFrame implements ActionListener {
 		pnlBook.removeAll();
 
 		pnlBook.setLayout(new GridLayout(lib.size()/numBooksInRow + 1, numBooksInRow, 0, 0));
-		for(BookGUI book : lib)
+		for(BookGUI book : lib) {
+			/*
+			if(book.getActionListeners.length == 0)
+				book.addActionListener(new ActionListener() {
+
+			    @Override
+			    public void actionPerformed(ActionEvent e) {
+			    	new FullBookGUI(book, library, libraryGUI, this).setVisible(true);
+			    }
+
+			});
+			*/
 			pnlBook.add(book);
+		}
 
 		pnlBook.revalidate();
 		pnlBook.repaint();
@@ -195,6 +206,20 @@ public class LibraryGUI extends JFrame implements ActionListener {
 			System.exit(0);
 		}
 	}
+
+	/* implements WindowFocusListener
+	// Refresh on Focus Changes
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+		System.out.println("Gained Focus");
+		addBooksToPanel();
+	}
+	
+	@Override
+	public void windowLostFocus(WindowEvent e) {
+		addBooksToPanel();
+	}
+	*/
 
 	// Main method that just starts a dynamic instance of this class
 	public static void main(String[] args) {
