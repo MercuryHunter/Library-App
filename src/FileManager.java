@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.File;
 
 public class FileManager{
 
@@ -28,6 +29,23 @@ public class FileManager{
 		this.deleteFile = deleteFile;
 		this.library = library;
 		this.libraryGUI = libraryGUI;
+
+		// Create files that don't exist
+		try {
+			File file = new File(mainFile);
+			if(!file.exists()) file.createNewFile();
+			file = new File(deleteFile);
+			if(!file.exists()) file.createNewFile();
+			file = new File("books/");
+			file.mkdirs();
+			file = new File("images/");
+			file.mkdirs();
+		}
+		catch(Exception e) {
+			// Something is really wrong
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 	
 	public void writeBookFile(Book book) {
@@ -48,7 +66,8 @@ public class FileManager{
 	// Writes a book's information to file
 	public void editBookFile(Book book) { 
 		try {
-			PrintWriter bookWriter = new PrintWriter(new FileWriter("books/" + book.getISBN() + ".txt", false));
+			File file = new File("books/" + book.getISBN() + ".txt");
+			PrintWriter bookWriter = new PrintWriter(new FileWriter(file, false));
 			bookWriter.println(book.getName());
 			bookWriter.println(book.getAuthor());
 			bookWriter.println(book.getISBN() + "|" + book.getWorkID() + "|" + book.getBookID());
@@ -67,17 +86,7 @@ public class FileManager{
 
 	public boolean deletedBook(Book book) {
 		String isbn = book.getISBN();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(deleteFile));
-			String line;
-			while((line = br.readLine()) != null) if(line.equals(isbn)) return true;
-			br.close();
-		}
-		catch(Exception x) {
-			System.err.println("Couldn't read deleted book list. Critical Error.");
-			System.exit(0);
-		}
-		return false;
+		return deletedBook(isbn);
 	}
 
 	public boolean deletedBook(String isbn) {
